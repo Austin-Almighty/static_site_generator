@@ -36,7 +36,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         self.assertEqual(html_node.value, "This is a text node")
-        
+
     def test_image(self):
         node = TextNode("This is an image", TextType.IMAGE, "https://www.boot.dev")
         html_node = text_node_to_html_node(node)
@@ -52,6 +52,12 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "b")
         self.assertEqual(html_node.value, "This is bold")
+
+    def test_code(self):
+        node = TextNode("def hello(): hello world!", TextType.CODE)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "code")
+        self.assertEqual(html_node.value, "def hello(): hello world!")
 
 if __name__ == "__main__":
     unittest.main()
