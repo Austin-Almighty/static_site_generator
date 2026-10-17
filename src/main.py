@@ -1,8 +1,56 @@
-from textnode import TextNode, TextType
+import logging
+import shutil
+from pathlib import Path
+
+from generate_page import generate_page
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
+
+def recursive_copy_contents(src: Path, target: Path):
+    if not isinstance(src, Path) or not isinstance(target, Path):
+        raise TypeError("Please pass in valid Path objects")
+    if not src.exists():
+        raise FileNotFoundError("Source Folder Not Found")
+    if not src.is_dir():
+        raise NotADirectoryError("The source path is not a directory")
+    target.mkdir(parents=True, exist_ok=True)
+
+    for item in src.iterdir():
+        if item.is_dir():
+            target_copy_dir = target / item.name
+            logger.info(f"Entering directory: {item}")
+            recursive_copy_contents(item, target_copy_dir)
+        else:
+            logger.info(f"Copying file: {item} -> {target / item.name}")
+            shutil.copy2(item, target / item.name)
+
+
+def copy_files_from_static_to_public():
+    PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public"
+
+    if PUBLIC_DIR.is_dir():
+        for item in PUBLIC_DIR.iterdir():
+            if item.is_dir() and not item.is_symlink():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
+
+    STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+    recursive_copy_contents(STATIC_DIR, PUBLIC_DIR)
+
+
+
 
 
 def main():
-    new_node = TextNode("Some text", TextType.LINK, "https://www.boot.dev")
-    print(new_node)
+    copy_files_from_static_to_public()
 
-main()
+    source_path = Path(__file__).resolve().parent.parent / "content" / "index.md"
+    template_path = Path(__file__).resolve().parent.parent / "template.html"
+    destination_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
+
+    generate_page(source_path, template_path, destination_path)
+
+if __name__ == "__main__":
+    main()
