@@ -2,7 +2,7 @@ import logging
 import shutil
 from pathlib import Path
 
-from generate_page import generate_page
+from generate_pages_recursively import generate_pages_recursively
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -46,11 +46,11 @@ def copy_files_from_static_to_public():
 def main():
     copy_files_from_static_to_public()
 
-    source_path = Path(__file__).resolve().parent.parent / "content" / "index.md"
+    source_path = Path(__file__).resolve().parent.parent / "content"
     template_path = Path(__file__).resolve().parent.parent / "template.html"
-    destination_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
+    destination_path = Path(__file__).resolve().parent.parent / "public"
 
-    generate_page(source_path, template_path, destination_path)
+    generate_pages_recursively(source_path, template_path, destination_path)
 
 if __name__ == "__main__":
     main()
