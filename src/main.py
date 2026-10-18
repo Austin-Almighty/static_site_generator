@@ -1,5 +1,6 @@
 import logging
 import shutil
+import sys
 from pathlib import Path
 
 from generate_pages_recursively import generate_pages_recursively
@@ -41,6 +42,7 @@ def copy_files_from_static_to_public():
 
 
 
+basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
 
 
 def main():
@@ -48,9 +50,9 @@ def main():
 
     source_path = Path(__file__).resolve().parent.parent / "content"
     template_path = Path(__file__).resolve().parent.parent / "template.html"
-    destination_path = Path(__file__).resolve().parent.parent / "public"
+    destination_path = Path(__file__).resolve().parent.parent / "docs"
 
-    generate_pages_recursively(source_path, template_path, destination_path)
+    generate_pages_recursively(source_path, template_path, destination_path, basepath)
 
 if __name__ == "__main__":
     main()
